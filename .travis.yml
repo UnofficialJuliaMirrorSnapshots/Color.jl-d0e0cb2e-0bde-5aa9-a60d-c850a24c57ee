@@ -1,0 +1,14 @@
+language: julia
+os:
+    - osx
+    - linux
+julia:
+    - 0.3
+    - nightly
+notifications:
+    email: false
+script:
+    - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+    - julia -e 'Pkg.clone(pwd()); Pkg.build("Color"); Pkg.test("Color"; coverage=true)';
+after_success:
+    - julia -e 'cd(Pkg.dir("Color")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())';
